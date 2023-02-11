@@ -1,0 +1,111 @@
+
+.logo{
+	
+	 
+	width:300px;
+	height:200px;
+	background:#069;
+	-webkit-border-radius:150px / 100px;
+	-moz-border-radius:150px / 100px;
+	-o-border-radius:150px / 100px;
+	border-radius:150px / 100px;
+		
+}
+
+.avatar{
+	
+	width: 300px ;
+	border-top-left-radius : 150px 100px;
+	border: 1px solid black;
+
+}
+
+#body { 
+	height : 100 vw; 	
+	background-color : lightyellow; 
+	font-size : 14 px;
+	margin : 75px; 
+	
+	
+}
+
+.entete { 
+	text-align : center;
+	}
+	
+h1
+{
+	font-family:'amble_light', verdana, serif;
+	color: rgb(175,39,67);
+	text-align: center;
+	font-weight: bold;
+	font-size : 35 rem;
+	position : relative;
+}
+
+h2
+{
+	width : 20 rem;
+	font-style: italic;
+	text-align : center; 
+	position : relative; 
+}
+
+#page {
+	
+	width : 80 vw; 
+	background-color : rgb(255,233,248); 
+	border : 65px solid rgb(117,22,63); 
+	text-align : center; 
+}
+
+#aboutme{
+	color : rgb(240,135,132);
+	text-align : center; 
+}
+
+.lien{
+	text-align : center;
+	border : 10px solid black;
+	
+}
+
+#titre {
+	font-size : 20px; 
+}
+table
+{
+	
+	font-family:"Comic Sans MS",Verdana, Arial,serif; 
+	margin:auto;
+	border-collapse: collapse;
+
+}
+table, th, td 
+{
+    border: 2px solid black;
+	width: 40%;
+	 height: 40px;
+}
+th
+{
+	font-size: 1.1em;
+    text-align: center;
+    background-color: rgb(203,27,75);
+    color: white;
+}
+
+td
+{
+	
+    padding: 15px;
+    text-align: center;
+}
+ol  
+{
+	background-color: white ;
+  margin :auto;
+  text-align:left;
+  display : inline-block;
+
+}
