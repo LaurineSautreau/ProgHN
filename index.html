@@ -81,28 +81,33 @@
                     <br />
                     <br />
                     <button onclick="alert('Bienvenue dans cette aventure');"><span>Bonjour</span></button>
-
+			
+			<div style="margin: 50px 5% 0px 5%; padding: 50px 10%; border-top: 2px solid black;">
 				<div id="aide">
-						<button class="submit" onclick="aide();"><span>Besoin d'aide ?</span></button>
+						<button id="boutonAide" onclick="afficheCacheAide();"><span>Besoin d'aide ?</span></button>
 					<div id="texteaide" style="display:none">
-						<h3> A quoi sert ce site ? </h3>
-						<p> Ce site permet... </p>
-						
+						<h2> Ceci est une aide afin de faciliter votre utilisation du site.  </h2>
 						<h3> Description des fonctionnalités  </h3>
-						<p> Le bouton "Choisir un fichier" va permettre de sélectionner un fichier txt.</p>
-						<p> Le bouton "Bonjour" va vous encouragez pour votre analyse. </p> 
-						<p> Le bouton "Segmentation" va servir à découper le texte du fichier en mots. </p>
-						<p> Les boutons restants seront pour les fonctionnalités à venir.</p>
-						<p align="center"><button class="submit" onclick="aide();"><span>Fermer</span></button> </p>
+						<p>Le bouton <button onclick="javascript:void(0);">Bonjour</button> permet d'afficher un message de bienvenue.</p>
+						<h3>Charger un fichier texte.</h3>
+						<p>Pour commencer, il faut donner un fichier texte via le bouton <button onclick="javascript:void(0);">Chosir un fichier</button></p>
+						<p>Le texte chargé sera affiché à gauche.</p>
+						<h3>Segmenter le texte chargé.</h3>
+						<p>Ensuite, on clique sur le bouton <button onclick="javascript:void(0);">Segmentation</button> pour afficher le texte segmenté.</p>
+						<p>Le texte segmenté sera affiché à droite.</p>
+						<h3>Compter les mots.</h3>
+						<p>Pour avoir le comptage des mots, triés du plus fréquent au moins fréquent, on clique sur le bouton <button onclick="javascript:void(0);">Dictionnaire</button></p>
+						<p>Le tableau sera affiché à droite.</p>
+                         						
 					</div>
 				</div>
-
+            </div> 
 					<br />
                     <br />
 				
-                    <button class="submit" onclick="decoupage();"><span>Segmentation</span></button>
-                    <button class="submit" onclick="alert('Je ne fais rien, changez-moi !');"><span>action 1</span></button>
-                    <button class="submit" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 2</span></button>
+                    <!--<button class="submit" onclick="segmentation();"><span>Segmentation</span></button>-->
+                    <button class="submit" onclick="dictionnaire();"><span>Dictionnaire</span></button>
+                    <button class="submit" onclick="grep();"><span>Grep</span></button>
                     <button class="submit" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 3</span></button>
                     <button class="submit" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 4</span></button>
                     <button class="submit" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 5</span></button>
