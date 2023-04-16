@@ -1,4 +1,5 @@
 let text_tokens = [];
+let text_lines = [];
 
 
 window.onload = function() {
@@ -25,7 +26,10 @@ window.onload = function() {
             reader.onload = function(e) {
                 fileDisplayArea.innerText = reader.result;
                 segmentation();
-                document.getElementById("logger").innerHTML = '<span class="infolog">Fichier chargé avec succès, ' + text_tokens.length + ' tokens dans le texte.</span>';
+
+                if (text_tokens.length != 0) {
+                    document.getElementById("logger").innerHTML = '<span class="infolog">Fichier chargé avec succès, ' + text_tokens.length + ' tokens dans le texte et ' + text_lines.length + ' lignes non vides.</span>';
+                }
             }
 
             // on lit concrètement le fichier.
@@ -33,10 +37,13 @@ window.onload = function() {
             reader.readAsText(file);
         } else { // pas un fichier texte : message d'erreur.
             fileDisplayArea.innerText = "";
+            text_tokens = [];
+            text_lines = [];
             document.getElementById("logger").innerHTML = '<span class="errorlog">Type de fichier non supporté !</span>';
         }
     });
 }
+
 // Fonction bouton aide 	
 
 function afficheCacheAide() {
@@ -58,7 +65,11 @@ function afficheCacheAide() {
 function segmentation() {
     let text = document.getElementById("fileDisplayArea").innerText;
     let delim = document.getElementById("delimID").value;
-    let display = document.getElementById("page-analysis");
+    
+    if (delim === "") {
+        document.getElementById("logger").innerHTML = '<span class="errorlog">Aucun délimiteur donné !</span>'
+        return;
+    }
 
     let regex_delim = new RegExp(
         "["
@@ -71,23 +82,25 @@ function segmentation() {
 
     let tokens_tmp = text.split(regex_delim);
     text_tokens = tokens_tmp.filter(x => x.trim() != ''); // on s'assure de ne garder que des tokens "non vides"
+    
+    text_lines = text.split(new RegExp("[\\r\\n]+")).filter(x => x.trim() != '');
 
     // global_var_tokens = tokens; // décommenter pour vérifier l'état des tokens dans la console développeurs sur le navigateur
     // display.innerHTML = tokens.join(" ");
-	
-	let ligne = text.split("\n");// segmentation en lignes 
-	text_ligne = ligne.filter(x => x.trim() != ''); // nombre de lignes non vides 
-	let autre = text.split(ligne,"\n","g") 	// stocker dans une variable gloable les lignes du texte 
-	messagelignesnonvides ='<span style=" background:red;">Nombre de lignes non vides</span>';
-	document.getElementById("fileDisplayArea").innerHTML = messagelignesnonvides;
-
 }
+
+
 
 // Fonction bouton dictionnaire 
 
 function dictionnaire() {
     let comptes = new Map();
     let display = document.getElementById("page-analysis");
+
+    if (text_tokens.length === 0) {
+        document.getElementById("logger").innerHTML = '<span class="errorlog">Il faut d\'abord charger un fichier !</span>';
+        return;
+    }
 
     for (let token of text_tokens) {
         comptes.set(token, (comptes.get(token) ?? 0) + 1);
@@ -97,10 +110,10 @@ function dictionnaire() {
     comptes_liste = comptes_liste.sort(function(a, b) {
         // solution attendue
         return b[1] - a[1]; // tri numérique inversé
-
-
+		
     });
 
+   
     let table = document.createElement("table");
     table.style.margin = "auto";
     let entete = table.appendChild(document.createElement("tr"));
@@ -114,29 +127,104 @@ function dictionnaire() {
         cellule_compte.innerHTML = compte;
     }
 
+    display.innerHTML = "";
     display.appendChild(table);
-	
-	
-	messagederreur ='<span style=" background:red;">Aucun fichier chargé</span>';
-	document.getElementById("fileDisplayArea").innerHTML = messagederreur;
-  
+    document.getElementById("logger").innerHTML = '';
 }
-
 
 
 // Fonction bouton grep 
 
 function grep() {
-	
-	let text = document.getElementById("fileDisplayArea").innerText;
-    let poleID = document.getElementById("poleID").value;
+    let pole = document.getElementById("poleID").value.trim();
     let display = document.getElementById("page-analysis");
-	
-	let ligne = document.getElementById('fileDisplayArea').innerText;
-	let ligne = new RegExp("\\w+", "g");
+    
+    if (text_lines.length === 0) {
+        // pas de lignes: erreur
+        document.getElementById("logger").innerHTML = '<span class="errorlog">Il faut d\'abord charger un fichier !</span>';
+        return;
+    }
 
-	
-	
-	messagederreur ='<span style=" background:red;">Aucun pôle chargé</span>';
-	document.getElementById("fileDisplayArea").innerHTML = messagederreur;
+    if (pole === '') {
+        // pas de pôle: erreur
+        document.getElementById("logger").innerHTML = '<span class="errorlog">Le pôle n\'est pas renseigné !</span>';
+        return;
+    }
+    let pole_regex = new RegExp('(' + pole + ')', "g");
+
+    display.innerHTML = "";
+    for (let line of text_lines) {
+        if (line.search(pole_regex) != -1) {
+            let paragraph = document.createElement("p");
+            paragraph.innerHTML = line.replaceAll(pole_regex, '<span style="color:red;">$1</span>')
+            display.appendChild(paragraph);
+        }
+    }
 }
+
+// Fonction bouton concordancier 
+
+function concordancier(){
+	let text = document.getElementById("fileDisplayArea").innerText;
+	let pole = document.getElementById("poleID").value.trim();
+	let longueur = document.getElementById("lgID").value.trim(); 
+    let display = document.getElementById("page-analysis");
+ 
+    if (text_tokens.length === 0) {
+        document.getElementById("logger").innerHTML = '<span class="errorlog">Il faut d\'abord charger un fichier !</span>';
+        return;
+    }
+
+    for (let token of text_tokens) {
+        comptes.set(token, (comptes.get(token) ?? 0) + 1);
+    }
+    
+    let comptes_liste = Array.from(comptes);
+    comptes_liste = comptes_liste.sort(function(a, b) {
+        // solution attendue
+        return b[1] - a[1]; // tri numérique inversé
+	
+	
+	if (longueur==""){longueur==10;}
+	let longueur = comptes_liste	
+	
+    });
+
+    if (pole === '') {
+        // pas de pôle: erreur
+        document.getElementById("logger").innerHTML = '<span class="errorlog">Le pôle n\'est pas renseigné !</span>';
+        return;
+    }
+    let pole_regex = new RegExp('(' + pole + ')', "g");
+
+    display.innerHTML = "";
+    for (let token of text_tokens) {
+        if (token.search(pole_regex) != -1) {
+            let paragraph = document.createElement("p");
+            paragraph.innerHTML = token.replaceAll(pole_regex, '<span style="color:red;">$1</span>')
+            display.appendChild(paragraph);
+        }
+    }
+	
+	let table = document.createElement("table");
+    table.style.margin = "auto";
+    let entete = table.appendChild(document.createElement("tr"));
+    entete.innerHTML = "<th>Contexte gauche</th><th>Pôle</th><th>Contexte droit</th>";
+    
+    for (let [Contexte gauche, Pôle, Contexte droit] of comptes_liste) {
+        let ligne_element = table.appendChild(document.createElement("tr"));
+        let cellule_contexte_gauche = ligne_element.appendChild(document.createElement("td"));
+        let cellule_pôle = ligne_element.appendChild(document.createElement("td"));
+		let cellule_contexte_droit = ligne_element.appendChild(document.createElement("td"));
+        cellule_contexte_gauche.innerHTML = Contexte gauche;
+        cellule_pôle.innerHTML = Pôle;
+		cellule_contexte_droit.innerHTML = Contexte droit;
+    }
+
+    display.innerHTML = "";
+    display.appendChild(table);
+    document.getElementById("logger").innerHTML = '';
+	
+	
+}
+
