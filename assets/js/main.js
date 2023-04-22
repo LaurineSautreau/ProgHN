@@ -164,67 +164,96 @@ function grep() {
 
 // Fonction bouton concordancier 
 
-function concordancier(){
-	let text = document.getElementById("fileDisplayArea").innerText;
-	let pole = document.getElementById("poleID").value.trim();
-	let longueur = document.getElementById("lgID").value.trim(); 
+function concordancier() {
+    let pole = document.getElementById("poleID").value.trim();
     let display = document.getElementById("page-analysis");
- 
+    
     if (text_tokens.length === 0) {
+        // pas de lignes: erreur
         document.getElementById("logger").innerHTML = '<span class="errorlog">Il faut d\'abord charger un fichier !</span>';
         return;
     }
-
-    for (let token of text_tokens) {
-        comptes.set(token, (comptes.get(token) ?? 0) + 1);
-    }
-    
-    let comptes_liste = Array.from(comptes);
-    comptes_liste = comptes_liste.sort(function(a, b) {
-        // solution attendue
-        return b[1] - a[1]; // tri numérique inversé
-	
-	
-	if (longueur==""){longueur==10;}
-	let longueur = comptes_liste	
-	
-    });
 
     if (pole === '') {
         // pas de pôle: erreur
         document.getElementById("logger").innerHTML = '<span class="errorlog">Le pôle n\'est pas renseigné !</span>';
         return;
     }
-    let pole_regex = new RegExp('(' + pole + ')', "g");
 
-    display.innerHTML = "";
-    for (let token of text_tokens) {
-        if (token.search(pole_regex) != -1) {
-            let paragraph = document.createElement("p");
-            paragraph.innerHTML = token.replaceAll(pole_regex, '<span style="color:red;">$1</span>')
-            display.appendChild(paragraph);
-        }
-    }
-	
-	let table = document.createElement("table");
+    let pole_regex = new RegExp("^" + pole + "$", "g");
+    let tailleContexte = Number(document.getElementById('lgID').value ?? "10");
+
+    let table = document.createElement("table");
     table.style.margin = "auto";
     let entete = table.appendChild(document.createElement("tr"));
     entete.innerHTML = "<th>Contexte gauche</th><th>Pôle</th><th>Contexte droit</th>";
-    
-    for (let [Contexte gauche, Pôle, Contexte droit] of comptes_liste) {
-        let ligne_element = table.appendChild(document.createElement("tr"));
-        let cellule_contexte_gauche = ligne_element.appendChild(document.createElement("td"));
-        let cellule_pôle = ligne_element.appendChild(document.createElement("td"));
-		let cellule_contexte_droit = ligne_element.appendChild(document.createElement("td"));
-        cellule_contexte_gauche.innerHTML = Contexte gauche;
-        cellule_pôle.innerHTML = Pôle;
-		cellule_contexte_droit.innerHTML = Contexte droit;
-    }
 
     display.innerHTML = "";
+    for (let i=0; i < text_tokens.length; i++) {
+        if (text_tokens[i].search(pole_regex) != -1) {
+            let start = Math.max(i - tailleContexte, 0);
+            let end = Math.min(i + tailleContexte, text_tokens.length);
+            let lc = text_tokens.slice(start, i);
+            let rc = text_tokens.slice(i+1, end+1);
+            let row = document.createElement("tr");
+
+            // manière fainéante
+            row.appendChild(document.createElement("td"));
+            row.childNodes[row.childNodes.length - 1].innerHTML = lc.join(' ');
+            row.appendChild(document.createElement("td"));
+            row.childNodes[row.childNodes.length - 1].innerHTML = text_tokens[i];
+            row.appendChild(document.createElement("td"));
+            row.childNodes[row.childNodes.length - 1].innerHTML = rc.join(' ');
+            table.appendChild(row);
+        }
+    }
+    
+    display.innerHTML = "";
     display.appendChild(table);
-    document.getElementById("logger").innerHTML = '';
-	
-	
 }
 
+
+// Fonction mot le plus long
+
+function long() {
+	// Chargé le texte 
+    let text = document.getElementById("fileDisplayArea").innerText;
+    let texteoriginal = text.split(/[\n\s,.;']+/);
+    let motlong="";
+        for (i=0; i<texteoriginal.length;i++) {
+            if (texteoriginal[i].length>motlong.length)
+            {motlong=texteoriginal[i]} }
+        // On affiche le résultat
+        document.getElementById('page-analysis').innerHTML = "Le mot le plus long est « <u>"+motlong+"</u> ».";
+        
+}
+
+
+// Fonction texte à l'envers 
+
+function renversé(){
+    // Chargé le texte
+    let text = document.getElementById('fileDisplayArea').innerText;
+    const newStr = text.split("").reverse().join("");
+        // On affiche le résultat 
+    document.getElementById('page-analysis').innerHTML= newStr;
+        
+}
+
+// Fonction graphique en barres  
+
+function graphiqueBarres() {
+    let data = {
+        labels: ["a", "b", "c", "d"],
+        series: [[1, 2, 3, 4,]] // notez les doubles parenthèses comparé à Camembert : on peut gérer plusieurs séries de chiffres (plusieurs barres à chaque label)
+    };
+
+    let options = {
+        width: 800,
+        height: 450,
+        horizontalBars: true
+    };
+
+    document.getElementById('page-analysis').innerHTML = '';
+    new Chartist.Bar("#page-analysis", data, options);
+}
